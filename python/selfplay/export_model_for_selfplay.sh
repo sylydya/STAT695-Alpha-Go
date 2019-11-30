@@ -3,7 +3,7 @@
 #Takes any models in tfsavedmodels_toexport/ and archives them in tfsavedmodels/
 #and outputs a cuda-runnable model file to modelstobetested/
 #Should be run periodically.
-
+:<<block
 if [[ $# -ne 2 ]]
 then
     echo "Usage: $0 BASEDIR USEGATING"
@@ -11,6 +11,7 @@ then
     echo "USEGATING = 1 to use gatekeeper, 0 to not use gatekeeper"
     exit 0
 fi
+block
 BASEDIR="$1"
 shift
 USEGATING="$1"

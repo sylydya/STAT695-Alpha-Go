@@ -1,5 +1,6 @@
 #!/bin/bash -eu
 
+:<<block
 if [[ $# -ne 4 ]]
 then
     echo "Usage: $0 BASEDIR TMPDIR NTHREADS USEGATING"
@@ -9,6 +10,7 @@ then
     echo "USEGATING = 1 to use gatekeeper, 0 to not use gatekeeper"
     exit 0
 fi
+block
 BASEDIRRAW="$1"
 shift
 TMPDIRRAW="$1"

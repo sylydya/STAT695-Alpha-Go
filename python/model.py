@@ -1531,6 +1531,13 @@ class ModelUtils:
       metrics = Metrics(model,target_vars,include_debug_stats=False)
       return (model,target_vars,metrics)
 
+
+
+    #placeholders["is_training"] = tf.constant(True,dtype=tf.bool)
+    #model = Model(model_config,pos_len,placeholders)
+    #target_vars = Target_vars(model,for_optimization=True,placeholders=placeholders)
+    #print("??????????", target_vars.opt_loss)
+
     if mode == tf.estimator.ModeKeys.TRAIN:
       placeholders["is_training"] = tf.constant(True,dtype=tf.bool)
       model = Model(model_config,pos_len,placeholders)
@@ -1550,14 +1557,18 @@ class ModelUtils:
         )
       )
 
+      print(target_vars.opt_loss)
+
       lr_adjusted_variables = model.lr_adjusted_variables
       update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) #collect batch norm update operations
       with tf.control_dependencies(update_ops):
         optimizer = tf.train.MomentumOptimizer(per_sample_learning_rate, momentum=0.9, use_nesterov=True)
         gradients = optimizer.compute_gradients(target_vars.opt_loss)
         adjusted_gradients = []
-#----------mixture normal prior parameter----------------------#
+        #----------mixture normal prior parameter----------------------#
+        '''
         lambda_n = 0.0000001
+        print("===========" * 100)
         prior_sigma_0 = 0.000002
         prior_sigma_1 = 0.2
 
@@ -1567,16 +1578,16 @@ class ModelUtils:
         c2 = 0.5 / prior_sigma_0 - 0.5 / prior_sigma_1
         threshold = np.sqrt(np.log((1 - lambda_n) / lambda_n * np.sqrt(prior_sigma_1 / prior_sigma_0)) / (
                 0.5 / prior_sigma_0 - 0.5 / prior_sigma_1))
-
+        '''
         for (grad,x) in gradients:
-          adjusted_grad = grad
+          adjusted_grad = grad * target_vars.opt_loss ** 0.5
           # ----------mixture normal prior update----------------------#
 
-          temp = tf.pow(tf.exp(c2 * tf.pow(x, 2) + c1) + 1, -1)
-          temp = x / (-prior_sigma_0) * temp + x / (-prior_sigma_1) * (1 - temp)
+          #temp = tf.pow(tf.exp(c2 * tf.pow(x, 2) + c1) + 1, -1)
+          #temp = x / (-prior_sigma_0) * temp + x / (-prior_sigma_1) * (1 - temp)
 
-          prior_grad = temp/(N_temp)
-          adjusted_grad = grad - prior_grad
+          #prior_grad = temp/(N_temp)
+          #adjusted_grad = grad - prior_grad
 
 
           if x.name in lr_adjusted_variables and grad is not None:
