@@ -1,4 +1,6 @@
 # STAT695-Alpha-Go
+The code is based on KataGo project https://github.com/lightvector/KataGo. We incorporate the Bayesian neural network model with mixture of normal prior into the original code, which allow us to prune network.
+
 Example instructions to start up these things (assuming you have appropriate machines set up), with some base directory $BASEDIR to hold the all the models and training data generated with a few hundred GB of disk space. The below commands assume you're running from the root of the repo and that you can run bash scripts. In addition, we need a 'selfplay' folder in $BASEDIR which contains all selfplay result and a 'models' folder to put the saved model.
    * `cd python_sparse; ./selfplay/shuffle_and_export_loop.sh $BASEDIR/ $SCRATCH_DIRECTORY $NUM_THREADS $USE_GATING`
      * This starts both the shuffler and exporter. The shuffler will use the scratch directory with the specified number of threads to shuffle in parallel. Make sure you have some disk space. You probably want as many threads as you have cores. If not using the gatekeeper, specify `0` for `$USE_GATING`, else specify `1`.
